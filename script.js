@@ -65,14 +65,19 @@ movieApp.printDropdowns = (genreData) => {
 // 4.
 movieApp.getMovies = function(userGenreSelection, userYearSelection) {
     const url = new URL(movieApp.discoverUrl);
-
+    const userEndYear = userYearSelection + 9
     url.search = new URLSearchParams({
         api_key: movieApp.apiKey,
         with_original_language: "en",
         with_genres: userGenreSelection,
-        primary_release_year: userYearSelection
-    })
+        sort_by: 'vote_average.desc',
+        "vote_count.gte": 100,
+        "primary_release_date.gte": `${userYearSelection}-01-01`,
+        "primary_release_date.lte": `${userEndYear}-12-31`
+        // release date keys need to be in quotes because of the dot notation
 
+    })
+        console.log(url.search)
     fetch(url)
     .then(function(apiResponse){
         return apiResponse.json();
@@ -85,43 +90,41 @@ movieApp.getMovies = function(userGenreSelection, userYearSelection) {
 
 // 6.
 movieApp.displayMovie = function(movies) {
-    
-    const formEl = document.querySelector('.userSubmit');
-    
-    formEl.addEventListener('submit', function(event) {
-        document.querySelector('.printMovies').innerHTML = '';
-
-        event.preventDefault();
+    movies.forEach(function(movieItem) {
+        console.log(movieItem);
+        const liElements = document.createElement('li');
         
-        movies.forEach(function(movieItem) {
-            console.log(movieItem);
-            const liElements = document.createElement('li');
-            
-            const movieTitle = document.createElement('h2');
-            movieTitle.innerText = movieItem.original_title;
-            
-            const moviePoster = document.createElement('img');
-            moviePoster.src = `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`;
-            moviePoster.alt = movieItem.title;
-            
-            const movieOverview = document.createElement('p');
-            movieOverview.innerText = movieItem.overview;
-            
-            liElements.append(movieTitle, moviePoster, movieOverview);
-            
-            const ulElement = document.querySelector('.printMovies');
-            ulElement.appendChild(liElements);
-        });
+        const movieTitle = document.createElement('h2');
+        movieTitle.innerText = movieItem.original_title;
+        
+        const moviePoster = document.createElement('img');
+        moviePoster.src = `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`;
+        moviePoster.alt = movieItem.title;
+        
+        const movieOverview = document.createElement('p');
+        movieOverview.innerText = movieItem.overview;
+        
+        liElements.append(movieTitle, moviePoster, movieOverview);
+        
+        const ulElement = document.querySelector('.printMovies');
+        ulElement.appendChild(liElements);
     });
 };
 
-// 5. Call this function in the genre api call function because there are no elements to attach this to until genre options are dynamically created
-// movieApp.getGenreId = function() {
-//     document.querySelector('#genre').addEventListener('click', function() {
-//         movieApp.getMovies(this.value);
-        
-//     });
-// };
+// variables to store the user selections
+movieApp.year = document.querySelector('#year');
+movieApp.genre = document.querySelector('#genre')
+
+const formEl = document.querySelector('.userSubmit');
+    formEl.addEventListener('submit', function(event) {
+        document.querySelector('.printMovies').innerHTML = '';
+        event.preventDefault();
+        console.log(movieApp.year.value)
+        console.log(movieApp.genre.value)
+
+        // get inputs from form selections and send them to the getMovies function
+        movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value))
+})
 
 
 // initializer
