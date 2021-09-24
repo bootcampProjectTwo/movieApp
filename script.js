@@ -82,7 +82,6 @@ movieApp.displayMovie = function(movies) {
 movieApp.getGenreId = function() {
     document.querySelector('#genre').addEventListener('click', function() {
         movieApp.getMovies(this.value);
-        
     });
 };
 
