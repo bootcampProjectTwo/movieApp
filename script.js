@@ -19,23 +19,65 @@
 
 // ==================== START OF JS ===============================
 // 1. 
-const movieApp = {};
+const movieApp = {}
 
 // 3.
-movieApp.apiURL = 'https://api.themoviedb.org/3/discover/movie';
+movieApp.discoverUrl = 'https://api.themoviedb.org/3/discover/movie';
+movieApp.listUrl = 'https://api.themoviedb.org/3/genre/movie/list';
 movieApp.apiKey = 'e70332005f91b878abd0a2a43b066814';
+
+
+// =========== Getting list of genres from endpoint =================================
+// store url & query info
+movieApp.populateOptions = () => {
+    const url = new URL(movieApp.listUrl);
+    url.search = new URLSearchParams({
+        api_key: movieApp.apiKey
+    });
+    // console.log(url.search)
+
+// make the api call & return the json object
+fetch(url)
+    .then((response) => {
+        return response.json();
+    })
+    .then((jsonResponse) => {
+        console.log(jsonResponse)
+    // call the print function while sending the json response to it
+            // the array of genres is one level inside the json object, so need to say 'jsonResponse.genres'
+    movieApp.printDropdowns(jsonResponse.genres)
+    });
+};
+
+// function to print genres to dropdown menus
+movieApp.printDropdowns = (genreData) => {
+    const genreDropdown = document.querySelector('#genre'); /* select dropdown menu */
+    console.log(genreDropdown)
+    console.log(genreData)
+    genreData.forEach((item) => {
+        const dropdownItem = document.createElement('option'); /* create the new elements */
+        dropdownItem.value = item.id; /* Populate each option with value code for making queries later */
+        dropdownItem.innerText = item.name; /* Populate each option with name of genre for user to see */
+        genreDropdown.appendChild(dropdownItem); /* place new elements inside dropdown menu */
+    });
+};
 
 // 4.
 movieApp.getMovies = function(userGenreSelection, userYearSelection) {
-    const url = new URL(movieApp.apiURL);
-
+    const url = new URL(movieApp.discoverUrl);
+    const userEndYear = userYearSelection + 9
     url.search = new URLSearchParams({
         api_key: movieApp.apiKey,
         with_original_language: "en",
         with_genres: userGenreSelection,
-        primary_release_year: userYearSelection
-    })
+        sort_by: 'vote_average.desc',
+        "vote_count.gte": 100,
+        "primary_release_date.gte": `${userYearSelection}-01-01`,
+        "primary_release_date.lte": `${userEndYear}-12-31`
+        // release date keys need to be in quotes because of the dot notation
 
+    })
+        console.log(url.search)
     fetch(url)
     .then(function(apiResponse){
         return apiResponse.json();
@@ -48,14 +90,11 @@ movieApp.getMovies = function(userGenreSelection, userYearSelection) {
 
 // 6.
 movieApp.displayMovie = function(movies) {
-    
-    const formEl = document.querySelector('.userSubmit');
-    
-    formEl.addEventListener('submit', function(event) {
-        document.querySelector('.printMovies').innerHTML = '';
-
-        event.preventDefault();
+    movies.forEach(function(movieItem) {
+        console.log(movieItem);
+        const liElements = document.createElement('li');
         
+<<<<<<< HEAD
         movies.forEach(function(movieItem) {
             console.log(movieItem);
             const liElements = document.createElement('li');
@@ -82,15 +121,46 @@ movieApp.displayMovie = function(movies) {
 movieApp.getGenreId = function() {
     document.querySelector('#genre').addEventListener('click', function() {
         movieApp.getMovies(this.value);
+=======
+        const movieTitle = document.createElement('h2');
+        movieTitle.innerText = movieItem.original_title;
+        
+        const moviePoster = document.createElement('img');
+        moviePoster.src = `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`;
+        moviePoster.alt = movieItem.title;
+        
+        const movieOverview = document.createElement('p');
+        movieOverview.innerText = movieItem.overview;
+        
+        liElements.append(movieTitle, moviePoster, movieOverview);
+        
+        const ulElement = document.querySelector('.printMovies');
+        ulElement.appendChild(liElements);
+>>>>>>> master
     });
 };
 
-// 2.
+// variables to store the user selections
+movieApp.year = document.querySelector('#year');
+movieApp.genre = document.querySelector('#genre')
+
+const formEl = document.querySelector('.userSubmit');
+    formEl.addEventListener('submit', function(event) {
+        document.querySelector('.printMovies').innerHTML = '';
+        event.preventDefault();
+        console.log(movieApp.year.value)
+        console.log(movieApp.genre.value)
+
+        // get inputs from form selections and send them to the getMovies function
+        movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value))
+})
+
+
+// initializer
 movieApp.init = function() {
-    // movieApp.populateOptions();
-
+    // run function to populate genre dropdown
+    movieApp.populateOptions();
     // movieApp.getCast();
-}
+};
 
-// 2a.
 movieApp.init();
