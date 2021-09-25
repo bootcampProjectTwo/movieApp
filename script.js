@@ -39,21 +39,28 @@ movieApp.populateOptions = () => {
 // make the api call & return the json object
 fetch(url)
     .then((response) => {
+        if (response.status >= 200 && response.status <= 299) {
         return response.json();
+        } else {
+            throw Error(apiResponse.statusText);
+        }
     })
     .then((jsonResponse) => {
-        console.log(jsonResponse)
+        // console.log(jsonResponse)
     // call the print function while sending the json response to it
             // the array of genres is one level inside the json object, so need to say 'jsonResponse.genres'
     movieApp.printDropdowns(jsonResponse.genres)
-    });
+    }).catch((error) => {
+        console.log(error)
+        movieApp.resultsError(error);
+    })
 };
 
 // function to print genres to dropdown menus
 movieApp.printDropdowns = (genreData) => {
     const genreDropdown = document.querySelector('#genre'); /* select dropdown menu */
-    console.log(genreDropdown)
-    console.log(genreData)
+    // console.log(genreDropdown)
+    // console.log(genreData)
     genreData.forEach((item) => {
         const dropdownItem = document.createElement('option'); /* create the new elements */
         dropdownItem.value = item.id; /* Populate each option with value code for making queries later */
@@ -78,13 +85,20 @@ movieApp.getMovies = function(userGenreSelection, userYearSelection) {
 
     })
         console.log(url.search)
+        // fetch & error checking
     fetch(url)
     .then(function(apiResponse){
-        return apiResponse.json();
+        if (apiResponse.status >= 200 && apiResponse.status <= 299) {
+            return apiResponse.json();
+        } else {
+            throw Error(apiResponse.statusText);
+        }
     })
     .then(function (jsonData) {
-        
         movieApp.displayMovie(jsonData.results);
+    }).catch((error) => {
+        console.log(error)
+        movieApp.resultsError(error);
     })
 };
 
@@ -124,6 +138,11 @@ movieApp.getGenreId = function() {
 =======
         const movieTitle = document.createElement('h2');
         movieTitle.innerText = movieItem.original_title;
+
+        const movieRatingDiv = document.createElement('div');
+
+        const movieRating = document.createElement('p');
+        movieRating.innerText = movieItem.vote_average;
         
         const moviePoster = document.createElement('img');
         moviePoster.src = `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`;
@@ -131,8 +150,10 @@ movieApp.getGenreId = function() {
         
         const movieOverview = document.createElement('p');
         movieOverview.innerText = movieItem.overview;
+
+        movieRatingDiv.append(movieRating)
         
-        liElements.append(movieTitle, moviePoster, movieOverview);
+        liElements.append(movieTitle, movieRatingDiv, moviePoster, movieOverview);
         
         const ulElement = document.querySelector('.printMovies');
         ulElement.appendChild(liElements);
@@ -146,15 +167,24 @@ movieApp.genre = document.querySelector('#genre')
 
 const formEl = document.querySelector('.userSubmit');
     formEl.addEventListener('submit', function(event) {
+        // document.querySelector('.errors').innerHTML ='';
         document.querySelector('.printMovies').innerHTML = '';
         event.preventDefault();
-        console.log(movieApp.year.value)
-        console.log(movieApp.genre.value)
+        // console.log(movieApp.year.value)
+        // console.log(movieApp.genre.value)
 
         // get inputs from form selections and send them to the getMovies function
         movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value))
 })
 
+// Error printing function
+movieApp.resultsError = function() {
+    // console.log('error fn running')
+    const resultsSection = document.querySelector('.errors')
+    const errorMessage = document.createElement('p');
+    errorMessage.innerText = `Ooops! It looks like we can't reach the MovieDB API right now! Try again in a few minutes!`
+    resultsSection.append(errorMessage)
+}
 
 // initializer
 movieApp.init = function() {

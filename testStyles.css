@@ -1,0 +1,57 @@
+section, header {
+    width: 80%;
+    margin: 0 auto;
+}
+
+h1 {
+    text-align: center;
+}
+
+form {
+    width: 100%;
+    margin: 0 auto;
+    text-align: center;
+}
+
+
+img {
+    max-width: 100%;
+    z-index: -1;
+}
+
+.printMovies {
+    display: flex;
+    flex-wrap: wrap;
+    justify-content: space-between;
+}
+
+.printMovies h2 {
+    width: 100%;
+    position: absolute;
+    top: 0;
+    text-align: center;
+}
+
+.printMovies div {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-color: aliceblue;
+    width: 3rem;
+    height: 3rem;
+    border-radius: 50%;
+    border: 2px solid navy;
+    position: absolute;
+    top: 4rem;
+    right: -1rem;
+    font-weight: bold;
+    font-size: 24px;
+    color: navy;
+}
+
+.printMovies li {
+    width: calc(100% / 4 - 2rem);
+    position: relative;
+    list-style: none;
+    padding: 5rem 0 0 0;
+}
