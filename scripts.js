@@ -22,7 +22,7 @@
 const movieApp = {}
 
 // 3.
-movieApp.castUrl = `https://api.themoviedb.org/3/search/person`;
+// movieApp.castUrl = `https://api.themoviedb.org/3/search/person`;
 movieApp.discoverUrl = 'https://api.themoviedb.org/3/discover/movie';
 movieApp.listUrl = 'https://api.themoviedb.org/3/genre/movie/list';
 movieApp.castUrl = 'https://api.themoviedb.org/3/search/person'
@@ -38,17 +38,24 @@ movieApp.populateOptions = () => {
     });
     // console.log(url.search)
 
-// make the api call & return the json object
+// make the Discover API call to get list of movies
 fetch(url)
     .then((response) => {
+        if (response.status >= 200 && response.status <= 299) {
         return response.json();
+        } else {
+            throw Error(apiResponse.statusText);
+        }
     })
     .then((jsonResponse) => {
         // console.log(jsonResponse)
     // call the print function while sending the json response to it
             // the array of genres is one level inside the json object, so need to say 'jsonResponse.genres'
     movieApp.printDropdowns(jsonResponse.genres)
-    });
+    }).catch((error) => {
+        console.log(error)
+        movieApp.resultsError(error);
+    })
 };
 
 // function to print genres to dropdown menus
@@ -73,12 +80,20 @@ movieApp.getCastId = function(userInput) {
     })
     fetch(url)
         .then(function(response) {
-            return response.json();
+            if(response.status >= 200 && response.status <= 299) {
+                return response.json();
+            } else {
+                throw Error (apiResponse.statusText);
+            }
+
         })
         .then(function(jsonData) {
             console.log(jsonData.results[0].id);
             movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value),`${jsonData.results[0].id}`)
-        });
+        }).catch((error) => {
+            console.log(error)
+            movieApp.resultsError(error)
+        })
 };
 
 // 4.
@@ -97,24 +112,36 @@ movieApp.getMovies = function(userGenreSelection, userYearSelection, userInputId
         // release date keys need to be in quotes because of the dot notation
     })
         // console.log(url.search)
+        // fetch & error checking
     fetch(url)
     .then(function(apiResponse){
-        return apiResponse.json();
+        if (apiResponse.status >= 200 && apiResponse.status <= 299) {
+            return apiResponse.json();
+        } else {
+            throw Error(apiResponse.statusText);
+        }
     })
     .then(function (jsonData) {
-        console.log(jsonData.results);
         movieApp.displayMovie(jsonData.results);
+    }).catch((error) => {
+        console.log(error)
+        movieApp.resultsError(error);
     })
 };
 
 // 6.
 movieApp.displayMovie = function(movies) {
     movies.forEach(function(movieItem) {
-        // console.log(movieItem);
+        console.log(movieItem);
         const liElements = document.createElement('li');
-        
+            
         const movieTitle = document.createElement('h2');
         movieTitle.innerText = movieItem.original_title;
+
+        const movieRatingDiv = document.createElement('div');
+
+        const movieRating = document.createElement('p');
+        movieRating.innerText = movieItem.vote_average;
         
         const moviePoster = document.createElement('img');
         moviePoster.src = `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`;
@@ -122,8 +149,10 @@ movieApp.displayMovie = function(movies) {
         
         const movieOverview = document.createElement('p');
         movieOverview.innerText = movieItem.overview;
+
+        movieRatingDiv.append(movieRating)
         
-        liElements.append(movieTitle, moviePoster, movieOverview);
+        liElements.append(movieTitle, movieRatingDiv, moviePoster, movieOverview);
         
         const ulElement = document.querySelector('.printMovies');
         ulElement.appendChild(liElements);
@@ -148,6 +177,15 @@ movieApp.formEl.addEventListener('submit', function(event) {
     
     ;
 })
+
+// Error printing function
+movieApp.resultsError = function() {
+    // console.log('error fn running')
+    const resultsSection = document.querySelector('.errors')
+    const errorMessage = document.createElement('p');
+    errorMessage.innerText = `Ooops! It looks like we can't reach the MovieDB API right now! Try again in a few minutes!`
+    resultsSection.append(errorMessage)
+};
 
 // initializer
 movieApp.init = function() {
