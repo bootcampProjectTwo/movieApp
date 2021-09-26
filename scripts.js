@@ -22,7 +22,6 @@
 const movieApp = {}
 
 // 3.
-// movieApp.castUrl = `https://api.themoviedb.org/3/search/person`;
 movieApp.discoverUrl = 'https://api.themoviedb.org/3/discover/movie';
 movieApp.listUrl = 'https://api.themoviedb.org/3/genre/movie/list';
 movieApp.castUrl = 'https://api.themoviedb.org/3/search/person'
@@ -35,34 +34,30 @@ movieApp.populateOptions = () => {
     const url = new URL(movieApp.listUrl);
     url.search = new URLSearchParams({
         api_key: movieApp.apiKey
-    });
-    // console.log(url.search)
-
+    })
 // make the Discover API call to get list of movies
-fetch(url)
-    .then((response) => {
-        if (response.status >= 200 && response.status <= 299) {
-        return response.json();
-        } else {
-            throw Error(apiResponse.statusText);
-        }
-    })
-    .then((jsonResponse) => {
-        // console.log(jsonResponse)
-    // call the print function while sending the json response to it
-            // the array of genres is one level inside the json object, so need to say 'jsonResponse.genres'
-    movieApp.printDropdowns(jsonResponse.genres)
-    }).catch((error) => {
-        console.log(error)
-        movieApp.resultsError(error);
-    })
+    fetch(url)
+        .then((response) => {
+            if (response.status >= 200 && response.status <= 299) {
+            return response.json();
+            } else {
+                throw Error(apiResponse.statusText);
+            }
+        })
+        .then((jsonResponse) => {
+        // call the print function while sending the json response to it
+                // the array of genres is one level inside the json object, so need to say 'jsonResponse.genres'
+        movieApp.printDropdowns(jsonResponse.genres)
+        }).catch((error) => {
+            console.log(error)
+            movieApp.resultsError(error);
+        });
 };
 
 // function to print genres to dropdown menus
 movieApp.printDropdowns = (genreData) => {
     const genreDropdown = document.querySelector('#genre'); /* select dropdown menu */
-    // console.log(genreDropdown)
-    // console.log(genreData)
+
     genreData.forEach((item) => {
         const dropdownItem = document.createElement('option'); /* create the new elements */
         dropdownItem.value = item.id; /* Populate each option with value code for making queries later */
@@ -88,7 +83,6 @@ movieApp.getCastId = function(userInput) {
 
         })
         .then(function(jsonData) {
-            console.log(jsonData.results[0].id);
             movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value),`${jsonData.results[0].id}`)
         }).catch((error) => {
             console.log(error)
@@ -98,21 +92,38 @@ movieApp.getCastId = function(userInput) {
 
 // 4.
 movieApp.getMovies = function(userGenreSelection, userYearSelection, userInputId) {
-    const url = new URL(movieApp.discoverUrl);
-    const userEndYear = userYearSelection + 9
-    url.search = new URLSearchParams({
-        api_key: movieApp.apiKey,
-        with_original_language: "en",
-        with_genres: userGenreSelection,
-        with_cast: `${userInputId}`,
-        sort_by: 'vote_average.desc',
-        "vote_count.gte": 100,
-        "primary_release_date.gte": `${userYearSelection}-01-01`,
-        "primary_release_date.lte": `${userEndYear}-12-31`
-        // release date keys need to be in quotes because of the dot notation
-    })
-        // console.log(url.search)
-        // fetch & error checking
+
+let url = new URL(movieApp.discoverUrl);
+const userEndYear = userYearSelection + 9
+
+const SearchParams = {
+    api_key: movieApp.apiKey,
+    with_original_language: "en",
+    sort_by: 'vote_average.desc',
+    "vote_count.gte": 1000,
+    with_genres: userGenreSelection,
+    "primary_release_date.gte": `${userYearSelection}-01-01`,
+    "primary_release_date.lte": `${userEndYear}-12-31`,
+    with_cast: `${userInputId}`
+    // release date keys need to be in quotes because of the dot notation
+}
+const deleteParams = () => {
+    if (movieApp.cast.value === '') {
+        delete SearchParams.with_cast
+    }
+    if (movieApp.year.value === '') {
+        delete SearchParams["primary_release_date.gte"]
+        delete SearchParams["primary_release_date.lte"]
+    }
+    if (movieApp.genre.value === '') {
+        delete SearchParams.with_genres
+    }
+}
+
+deleteParams()
+
+url.search = new URLSearchParams(SearchParams)
+
     fetch(url)
     .then(function(apiResponse){
         if (apiResponse.status >= 200 && apiResponse.status <= 299) {
@@ -124,21 +135,54 @@ movieApp.getMovies = function(userGenreSelection, userYearSelection, userInputId
     .then(function (jsonData) {
         movieApp.displayMovie(jsonData.results);
     }).catch((error) => {
-        console.log(error)
+
         movieApp.resultsError(error);
     })
-};
+        // console.log(url.search)
+        // fetch & error checking
+    // fetch(url)
+    // .then(function(apiResponse){
+    //     if (apiResponse.status >= 200 && apiResponse.status <= 299) {
+    //         return apiResponse.json();
+    //     } else {
+    //         throw Error(apiResponse.statusText);
+    //     }
+    // })
+    // .then(function (jsonData) {
+    //     // movieApp.displayMovie(jsonData.results);
+    // }).catch((error) => {
+    //     console.log(error)
+    //     movieApp.resultsError(error);
+//     })
+}
+
+
 
 // 6.
 movieApp.displayMovie = function(movies) {
+    if (movies.length === 0) {
+        
+        const noResultElement = document.createElement('p')
+        const resultsSection = document.querySelector('.errors')
+
+        noResultElement.innerText = `Oops! It doesn't look like`
+        resultsSection.append(noResultElement)
+        
+    }
+console.log(movies.length)
     movies.forEach(function(movieItem) {
-        console.log(movieItem);
+        // console.log(movieItem);
+
         const liElements = document.createElement('li');
+
+        const movieRecos = document.querySelector('h2');
+        movieRecos.innerHTML = `Here are our recommendations!`
             
-        const movieTitle = document.createElement('h2');
+        const movieTitle = document.createElement('h3');
         movieTitle.innerText = movieItem.original_title;
 
         const movieRatingDiv = document.createElement('div');
+        movieRatingDiv.classList.add('movieRatingPositioning');
 
         const movieRating = document.createElement('p');
         movieRating.innerText = movieItem.vote_average;
@@ -146,16 +190,23 @@ movieApp.displayMovie = function(movies) {
         const moviePoster = document.createElement('img');
         moviePoster.src = `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`;
         moviePoster.alt = movieItem.title;
-        
-        const movieOverview = document.createElement('p');
-        movieOverview.innerText = movieItem.overview;
 
-        movieRatingDiv.append(movieRating)
+        const movieOverviewDiv = document.createElement('div');
+        movieOverviewDiv.classList.add('movieOverview');
         
-        liElements.append(movieTitle, movieRatingDiv, moviePoster, movieOverview);
+        const movieOverviewText = document.createElement('p');
+        movieOverviewText.innerText = movieItem.overview;
+
+        movieRatingDiv.append(moviePoster, movieRating);
+
+        movieOverviewDiv.append(movieOverviewText);
+
+        liElements.append(movieTitle, movieRatingDiv, movieOverviewDiv);
         
         const ulElement = document.querySelector('.printMovies');
         ulElement.appendChild(liElements);
+
+        formEl.reset();
     });
 };
 
@@ -166,16 +217,21 @@ movieApp.cast = document.querySelector('#userQuerySearch');
 
 movieApp.formEl = document.querySelector('.userSubmit');
 movieApp.formEl.addEventListener('submit', function(event) {
-    document.querySelector('.printMovies').innerHTML = '';
+    document.querySelector('.printMovies').innerHTML = ''
+    document.querySelector('.errors').innerHTML = ''
+    // if user doesn't provide an actor name, run without getCastId
+        if (movieApp.cast.value === "") {
+        console.log('uh oh')
+            movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value));
+    } else {
+        console.log('all kewl')
+        // get inputs from form selections and send them to the getMovies function
+        movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value), movieApp.getCastId(movieApp.cast.value));
+    };
     event.preventDefault();
     console.log(movieApp.year.value)
     console.log(movieApp.genre.value)
     console.log(movieApp.cast.value);
-
-    // get inputs from form selections and send them to the getMovies function
-    movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value), movieApp.getCastId(movieApp.cast.value));
-    
-    ;
 })
 
 // Error printing function
@@ -191,7 +247,6 @@ movieApp.resultsError = function() {
 movieApp.init = function() {
     // run function to populate genre dropdown
     movieApp.populateOptions();
-    // movieApp.getCast();
 };
 
 movieApp.init();
