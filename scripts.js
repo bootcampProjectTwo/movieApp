@@ -22,7 +22,6 @@
 const movieApp = {}
 
 // 3.
-// movieApp.castUrl = `https://api.themoviedb.org/3/search/person`;
 movieApp.discoverUrl = 'https://api.themoviedb.org/3/discover/movie';
 movieApp.listUrl = 'https://api.themoviedb.org/3/genre/movie/list';
 movieApp.castUrl = 'https://api.themoviedb.org/3/search/person'
@@ -35,34 +34,30 @@ movieApp.populateOptions = () => {
     const url = new URL(movieApp.listUrl);
     url.search = new URLSearchParams({
         api_key: movieApp.apiKey
-    });
-    // console.log(url.search)
-
+    })
 // make the Discover API call to get list of movies
-fetch(url)
-    .then((response) => {
-        if (response.status >= 200 && response.status <= 299) {
-        return response.json();
-        } else {
-            throw Error(apiResponse.statusText);
-        }
-    })
-    .then((jsonResponse) => {
-        // console.log(jsonResponse)
-    // call the print function while sending the json response to it
-            // the array of genres is one level inside the json object, so need to say 'jsonResponse.genres'
-    movieApp.printDropdowns(jsonResponse.genres)
-    }).catch((error) => {
-        console.log(error)
-        movieApp.resultsError(error);
-    })
+    fetch(url)
+        .then((response) => {
+            if (response.status >= 200 && response.status <= 299) {
+            return response.json();
+            } else {
+                throw Error(apiResponse.statusText);
+            }
+        })
+        .then((jsonResponse) => {
+        // call the print function while sending the json response to it
+                // the array of genres is one level inside the json object, so need to say 'jsonResponse.genres'
+        movieApp.printDropdowns(jsonResponse.genres)
+        }).catch((error) => {
+            console.log(error)
+            movieApp.resultsError(error);
+        });
 };
 
 // function to print genres to dropdown menus
 movieApp.printDropdowns = (genreData) => {
     const genreDropdown = document.querySelector('#genre'); /* select dropdown menu */
-    // console.log(genreDropdown)
-    // console.log(genreData)
+
     genreData.forEach((item) => {
         const dropdownItem = document.createElement('option'); /* create the new elements */
         dropdownItem.value = item.id; /* Populate each option with value code for making queries later */
@@ -88,7 +83,6 @@ movieApp.getCastId = function(userInput) {
 
         })
         .then(function(jsonData) {
-            // console.log(jsonData.results[0].id);
             movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value),`${jsonData.results[0].id}`)
         }).catch((error) => {
             console.log(error)
@@ -139,10 +133,9 @@ url.search = new URLSearchParams(SearchParams)
         }
     })
     .then(function (jsonData) {
-        console.log('hello')
         movieApp.displayMovie(jsonData.results);
     }).catch((error) => {
-        console.log(error)
+
         movieApp.resultsError(error);
     })
         // console.log(url.search)
@@ -181,11 +174,15 @@ console.log(movies.length)
         // console.log(movieItem);
 
         const liElements = document.createElement('li');
+
+        const movieRecos = document.querySelector('h2');
+        movieRecos.innerHTML = `Here are our recommendations!`
             
-        const movieTitle = document.createElement('h2');
+        const movieTitle = document.createElement('h3');
         movieTitle.innerText = movieItem.original_title;
 
         const movieRatingDiv = document.createElement('div');
+        movieRatingDiv.classList.add('movieRatingPositioning');
 
         const movieRating = document.createElement('p');
         movieRating.innerText = movieItem.vote_average;
@@ -193,16 +190,23 @@ console.log(movies.length)
         const moviePoster = document.createElement('img');
         moviePoster.src = `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`;
         moviePoster.alt = movieItem.title;
-        
-        const movieOverview = document.createElement('p');
-        movieOverview.innerText = movieItem.overview;
 
-        movieRatingDiv.append(movieRating)
+        const movieOverviewDiv = document.createElement('div');
+        movieOverviewDiv.classList.add('movieOverview');
         
-        liElements.append(movieTitle, movieRatingDiv, moviePoster, movieOverview);
+        const movieOverviewText = document.createElement('p');
+        movieOverviewText.innerText = movieItem.overview;
+
+        movieRatingDiv.append(moviePoster, movieRating);
+
+        movieOverviewDiv.append(movieOverviewText);
+
+        liElements.append(movieTitle, movieRatingDiv, movieOverviewDiv);
         
         const ulElement = document.querySelector('.printMovies');
         ulElement.appendChild(liElements);
+
+        formEl.reset();
     });
 };
 
@@ -228,8 +232,6 @@ movieApp.formEl.addEventListener('submit', function(event) {
     console.log(movieApp.year.value)
     console.log(movieApp.genre.value)
     console.log(movieApp.cast.value);
-
-
 })
 
 // Error printing function
@@ -245,7 +247,6 @@ movieApp.resultsError = function() {
 movieApp.init = function() {
     // run function to populate genre dropdown
     movieApp.populateOptions();
-    // movieApp.getCast();
 };
 
 movieApp.init();

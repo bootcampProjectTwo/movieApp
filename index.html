@@ -4,55 +4,78 @@
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
-    <link rel="stylesheet" href="./testStyles.css">
+    <title>Movie App</title>
+
+        <!--------------------------- GOOGLE FONTS LINK ------------------------>
+        <link rel="preconnect" href="https://fonts.googleapis.com">
+        <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+        <link href="https://fonts.googleapis.com/css2?family=Josefin+Sans:wght@400;600&family=Limelight&display=swap" rel="stylesheet">
+    
+        <!---------------------------- STYLES FILE LINK --------------------- -->
+    <link rel="stylesheet" href="./styles/styles.css">
 </head>
 <body>
 
-    <header>
-        <h1>
-            Let's watch a movie with...
-        </h1>
-    </header>
-    <main>
-        <section>
-            <form class="userSubmit" action="#">
-                <label for="genreSelection">Genre</label>
-                <select name="genre" id="genre">
-                    <option value selected>Select Genre...</option>
-                    <!-- elements created in JS here -->
-                </select>
+    <div class="wrapper">
 
-                <label for="yearSelection">Year</label>
-                <select name="year" id="year">
-                    <option value selected>Select Year...</option>
-                    <option value="1980">1980's</option>
-                    <option value="1990">1990's</option>
-                    <option value="2000">2000's</option>
-                    <option value="2010">2010's</option>
-                    <option value="2020">2020's</option>
-                </select>
+        <header>
+            <h1>
+                Let's watch a movie with...
+            </h1>
+        </header>
 
-                <label for="userQuerySearch">Search actor/actress here...</label>
-                <input type="text" name="userQuerySearch" id="userQuerySearch">
+        <main>
 
-                <button id="formSubmit">Submit</button>
-                
-            </form>
-        </section>
+            <section>
+                <form class="userSubmit" action="#resultsSection">
+                    <div class="userSelections">
 
-        <section class="resultsSection">
-            <div class="errors"></div>
-            <ul class="printMovies">
-                <!-- Movie list items here -->
-            </ul>
-        </section>
-    </main>
+                        <label for="genreSelection" class="sr-only">Genre</label>
+                        <select name="genre" id="genre">
+                            <option value disabled selected>Select Genre...</option>
+                            <!-- elements created in JS here -->
+                        </select>
+        
+                        <label for="yearSelection" class="sr-only">Year</label>
+                        <select name="year" id="year">
+                            <option value disabled selected>Select Year...</option>
+                            <option value="1980">1980's</option>
+                            <option value="1990">1990's</option>
+                            <option value="2000">2000's</option>
+                            <option value="2010">2010's</option>
+                            <option value="2020">2020's</option>
+                        </select>
+
+                        <label for="userQuerySearch" class="sr-only">Search actor/actress here...</label>
+                        <input type="text" name="userQuerySearch" id="userQuerySearch" placeholder="Search by cast...">
+
+                    </div> <!-- userSelection -->
+
+                    <button id="formSubmit">Submit</button>
+                    
+                </form>
+            </section>
+
+            <section class="resultsSection" >
+                <div class="errors">
+                    <!-- Error handling message here -->
+                </div>
+
+                <h2></h2>
+
+                <ul class="printMovies" id="results">
+                    <!-- Movie list items here -->
+                </ul>
+
+            </section>
+            
+        </main>
+    </div> <!-- wrapper -->
 
     <footer>
         <p>Created at <a href="www.junocollege.com">Juno College of Technology</a> by Brodie Day and Sara Amiri. Movie suggestions by <a href="https://www.themoviedb.org/">The MOVIE DB</a></p>
     </footer>
-    <!-- <script src="./script.js"> </script> -->
+
     <script src="./scripts.js"></script>
 </body>
 </html>
