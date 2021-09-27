@@ -176,9 +176,11 @@ footer {
 @media (max-width: 768px) {
     .printMovies li {
         width: 45%;
+        margin: 0 .25rem;
     }
 }
-@media (max-width: 414px) {
+
+@media (max-width: 468px) {
     h1 {
         font-size: 3rem;
         margin: 6rem 0 4rem 0;
@@ -195,7 +197,6 @@ footer {
                 margin: 1rem 0;
             }
         }
-        
     }
     
     button {

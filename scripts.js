@@ -166,7 +166,7 @@ movieApp.displayMovie = function(movies) {
         const liElements = document.createElement('li');
 
         const movieRecos = document.querySelector('h2');
-        movieRecos.innerHTML = `Here are our recommendations!`
+        movieRecos.innerHTML = `Here are our recommendations!`;
             
         const movieTitle = document.createElement('h3');
         movieTitle.innerText = movieItem.original_title;
@@ -209,6 +209,8 @@ movieApp.formEl = document.querySelector('.userSubmit');
 movieApp.formEl.addEventListener('submit', function(event) {
     document.querySelector('.printMovies').innerHTML = ''
     document.querySelector('.errors').innerHTML = ''
+    // const resultsSection = document.querySelector('#results');
+    // resultsSection.scrollIntoView;
     
     // if user doesn't provide an actor name, run without getCastId
     if (movieApp.cast.value === "") {
