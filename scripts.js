@@ -147,17 +147,11 @@ movieApp.displayMovie = function(movies) {
     
     console.log(movies)
     if (movies.length === 0) {
-        // const noResultElement = document.createElement('p')
-        // const resultsSection = document.querySelector('.errors')
+        const noResultElement = document.createElement('p')
+        const resultsSection = document.querySelector('.errors')
 
-        // noResultElement.innerText = `Oops! It doesn't look like`
-        // resultsSection.append(noResultElement)
-
-        // const resultsSection = document.querySelector('.errors')
-        // const errorMessage = document.createElement('p');
-        // errorMessage.innerText = `Ooops! It looks like we can't reach the MovieDB API right now! Try again in a few minutes!`
-        // resultsSection.append(errorMessage)
-        movieApp.resultsError(); 
+        noResultElement.innerText = `Oops! It doesn't look like`
+        resultsSection.append(noResultElement)
     }
 
     console.log(movies.length)
@@ -217,9 +211,6 @@ movieApp.formEl.addEventListener('submit', function(event) {
     movieApp.getCastId(movieApp.cast.value)
 
     event.preventDefault();
-    // console.log(movieApp.year.value)
-    // console.log(movieApp.genre.value)
-    // console.log(movieApp.cast.value);
 })
 
 // Error printing function
