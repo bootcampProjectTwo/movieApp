@@ -123,7 +123,6 @@ const deleteParams = () => {
 deleteParams()
 
 url.search = new URLSearchParams(SearchParams)
-
     fetch(url)
     .then(function(apiResponse){
         if (apiResponse.status >= 200 && apiResponse.status <= 299) {
@@ -134,28 +133,12 @@ url.search = new URLSearchParams(SearchParams)
     })
     .then(function (jsonData) {
         movieApp.displayMovie(jsonData.results);
+        console.log(jsonData.results)
     }).catch((error) => {
 
         movieApp.resultsError(error);
     })
-        // console.log(url.search)
-        // fetch & error checking
-    // fetch(url)
-    // .then(function(apiResponse){
-    //     if (apiResponse.status >= 200 && apiResponse.status <= 299) {
-    //         return apiResponse.json();
-    //     } else {
-    //         throw Error(apiResponse.statusText);
-    //     }
-    // })
-    // .then(function (jsonData) {
-    //     // movieApp.displayMovie(jsonData.results);
-    // }).catch((error) => {
-    //     console.log(error)
-    //     movieApp.resultsError(error);
-//     })
 }
-
 
 
 // 6.
@@ -206,8 +189,9 @@ console.log(movies.length)
         const ulElement = document.querySelector('.printMovies');
         ulElement.appendChild(liElements);
 
-        formEl.reset();
     });
+    const startOfResults = document.querySelector('h2')
+    startOfResults.scrollIntoView({behavior: 'smooth'})
 };
 
 // variables to store the user selections
@@ -217,26 +201,20 @@ movieApp.cast = document.querySelector('#userQuerySearch');
 
 movieApp.formEl = document.querySelector('.userSubmit');
 movieApp.formEl.addEventListener('submit', function(event) {
+    
     document.querySelector('.printMovies').innerHTML = ''
     document.querySelector('.errors').innerHTML = ''
-    // if user doesn't provide an actor name, run without getCastId
-        if (movieApp.cast.value === "") {
-        console.log('uh oh')
-            movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value));
-    } else {
-        console.log('all kewl')
-        // get inputs from form selections and send them to the getMovies function
-        movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value), movieApp.getCastId(movieApp.cast.value));
-    };
+
+    movieApp.getCastId(movieApp.cast.value)
+
     event.preventDefault();
-    console.log(movieApp.year.value)
-    console.log(movieApp.genre.value)
-    console.log(movieApp.cast.value);
+    // console.log(movieApp.year.value)
+    // console.log(movieApp.genre.value)
+    // console.log(movieApp.cast.value);
 })
 
 // Error printing function
 movieApp.resultsError = function() {
-    // console.log('error fn running')
     const resultsSection = document.querySelector('.errors')
     const errorMessage = document.createElement('p');
     errorMessage.innerText = `Ooops! It looks like we can't reach the MovieDB API right now! Try again in a few minutes!`
