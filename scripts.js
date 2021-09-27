@@ -145,55 +145,56 @@ movieApp.getMovies = function(userGenreSelection, userYearSelection, userInputId
 // 6.
 movieApp.displayMovie = function(movies) {
     
+    const movieRecos = document.querySelector('h2');
+
     console.log(movies)
     if (movies.length === 0) {
         const noResultElement = document.createElement('p')
         const resultsSection = document.querySelector('.errors')
+        movieRecos.innerHTML = ''
 
-        noResultElement.innerText = `Oops! It doesn't look like`
+        noResultElement.innerText = `Oops! We can't find any movies with those criteria!`
         resultsSection.append(noResultElement)
-    }
-
-    console.log(movies.length)
-    movies.forEach(function(movieItem) {
-        // console.log(movieItem);
-
-        const liElements = document.createElement('li');
-
-        const movieRecos = document.querySelector('h2');
+    } else {
+        // const movieRecos = document.querySelector('h2');
         movieRecos.innerHTML = `Here are our recommendations!`
+        
+        movies.forEach(function(movieItem) {
+
+            const liElements = document.createElement('li');
+
+            const movieTitle = document.createElement('h3');
+            movieTitle.innerText = movieItem.original_title;
+
+            const movieRatingDiv = document.createElement('div');
+            movieRatingDiv.classList.add('movieRatingPositioning');
+
+            const movieRating = document.createElement('p');
+            movieRating.innerText = movieItem.vote_average;
             
-        const movieTitle = document.createElement('h3');
-        movieTitle.innerText = movieItem.original_title;
+            const moviePoster = document.createElement('img');
+            moviePoster.src = `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`;
+            moviePoster.alt = movieItem.title;
 
-        const movieRatingDiv = document.createElement('div');
-        movieRatingDiv.classList.add('movieRatingPositioning');
+            const movieOverviewDiv = document.createElement('div');
+            movieOverviewDiv.classList.add('movieOverview');
+            
+            const movieOverviewText = document.createElement('p');
+            movieOverviewText.innerText = movieItem.overview;
 
-        const movieRating = document.createElement('p');
-        movieRating.innerText = movieItem.vote_average;
-        
-        const moviePoster = document.createElement('img');
-        moviePoster.src = `https://image.tmdb.org/t/p/w500/${movieItem.poster_path}`;
-        moviePoster.alt = movieItem.title;
+            movieRatingDiv.append(moviePoster, movieRating);
 
-        const movieOverviewDiv = document.createElement('div');
-        movieOverviewDiv.classList.add('movieOverview');
-        
-        const movieOverviewText = document.createElement('p');
-        movieOverviewText.innerText = movieItem.overview;
+            movieOverviewDiv.append(movieOverviewText);
 
-        movieRatingDiv.append(moviePoster, movieRating);
+            liElements.append(movieTitle, movieRatingDiv, movieOverviewDiv);
+            
+            const ulElement = document.querySelector('.printMovies');
+            ulElement.appendChild(liElements);
 
-        movieOverviewDiv.append(movieOverviewText);
-
-        liElements.append(movieTitle, movieRatingDiv, movieOverviewDiv);
-        
-        const ulElement = document.querySelector('.printMovies');
-        ulElement.appendChild(liElements);
-
-    });
-    const startOfResults = document.querySelector('h2')
-    startOfResults.scrollIntoView({behavior: 'smooth'})
+        });
+        const startOfResults = document.querySelector('h2')
+        startOfResults.scrollIntoView({behavior: 'smooth'})
+    }
 };
 
 // variables to store the user selections
