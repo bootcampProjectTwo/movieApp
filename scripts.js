@@ -135,6 +135,7 @@ movieApp.getMovies = function(userGenreSelection, userYearSelection, userInputId
     })
     .then(function (jsonData) {
         movieApp.displayMovie(jsonData.results);
+        console.log(jsonData.results)
     }).catch((error) => {
 
         movieApp.resultsError(error);
@@ -197,6 +198,8 @@ movieApp.displayMovie = function(movies) {
         ulElement.appendChild(liElements);
 
     });
+    const startOfResults = document.querySelector('h2')
+    startOfResults.scrollIntoView({behavior: 'smooth'})
 };
 
 // variables to store the user selections
@@ -207,36 +210,20 @@ movieApp.userSelections = document.querySelector('.userSelections');
 
 movieApp.formEl = document.querySelector('.userSubmit');
 movieApp.formEl.addEventListener('submit', function(event) {
+    
     document.querySelector('.printMovies').innerHTML = ''
     document.querySelector('.errors').innerHTML = ''
-    
-    // if user doesn't provide an actor name, run without getCastId
-    if (movieApp.cast.value === "") {
-        console.log('uh oh')
-        movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value));
-    } else {
-        console.log('all kewl')
-        // get inputs from form selections and send them to the getMovies function
-        movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value), movieApp.getCastId(movieApp.cast.value));
-    };
-    if (movieApp.year.value === "" || movieApp.genre.value === "") {
-        console.log('Whaaaaaaaa');
-        movieApp.getMovies(movieApp.getCastId(movieApp.cast.value))
-    } 
-    else {
-        movieApp.resultsError();
-    }
+
+    movieApp.getCastId(movieApp.cast.value)
+
     event.preventDefault();
-    console.log(movieApp.year.value)
-    console.log(movieApp.genre.value)
-    console.log(movieApp.cast.value);
-    
-    movieApp.formEl.reset();
+    // console.log(movieApp.year.value)
+    // console.log(movieApp.genre.value)
+    // console.log(movieApp.cast.value);
 })
 
 // Error printing function
 movieApp.resultsError = function() {
-    // console.log('error fn running')
     const resultsSection = document.querySelector('.errors')
     const errorMessage = document.createElement('p');
     errorMessage.innerText = `Ooops! It looks like we can't reach the MovieDB API right now! Try again in a few minutes!`
