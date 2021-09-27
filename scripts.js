@@ -1,4 +1,4 @@
-// / - Create an app object
+// - Create an app object
 // - Create an init method and call it at the end of our js file
 // - Fetch genre and discover apis
 //     - Store url and key in variables for cleaner code
@@ -9,7 +9,14 @@
 //     - Add an event listener to our form element
 // - Store user input’s value in a variable using query Selector
 // - Upon user’s click, make an API call, get movies based on year and genre selection
-// - Go through the array and append 10 picks on the page
+    // Use queries to narrow down options, matching user selection
+// - Go through the array and print picks on the page
+
+// Use a different endpoint to get actor/actress' ID and insert in discover API parameters 
+// Make an API, use parameter to replace with user input
+    // Get user input value (actor/actress name)
+    // Get id of the actor/actress 
+    // Replace with discover API with_cast parameter
 
 // 1. movieApp.populateOptions();// Makes API call to get genre with ids
 // 2. movieApp.printDropdowns(); // Creates elements and inserts genre ids in value attribute
@@ -18,15 +25,13 @@
 // 5. movieApp.displayMovie(); // Displays movies on page
 // 6. movieApp.formEl // Event listener that triggers the API call function
 
-// 1. ==========
+// movieApp Object
 const movieApp = {}
 
-// 3.
 movieApp.discoverUrl = 'https://api.themoviedb.org/3/discover/movie';
 movieApp.listUrl = 'https://api.themoviedb.org/3/genre/movie/list';
 movieApp.castUrl = 'https://api.themoviedb.org/3/search/person'
 movieApp.apiKey = 'e70332005f91b878abd0a2a43b066814';
-
 
 // =========== Getting list of genres from endpoint =================================
 // store url & query info
@@ -64,8 +69,8 @@ movieApp.printDropdowns = (genreData) => {
         genreDropdown.appendChild(dropdownItem); /* place new elements inside dropdown menu */
     });
 };
-
-// Function to get cast id
+// =========== Getting id of actor/actress from endpoint =================================
+// Function to get cast id using "query" to access user input
 movieApp.getCastId = function(userInput) {
     const url = new URL(movieApp.castUrl);
     url.search = new URLSearchParams({
@@ -88,6 +93,7 @@ movieApp.getCastId = function(userInput) {
         })
 };
 
+// =========== Getting list of movies from endpoint and narrow down results using queries =================================
 // Function to make API call for movie list
 movieApp.getMovies = function(userGenreSelection, userYearSelection, userInputId) {
 
@@ -106,6 +112,7 @@ movieApp.getMovies = function(userGenreSelection, userYearSelection, userInputId
         // release date keys need to be in quotes because of the dot notation
     }
 
+    // Function to delete parameters that can't be replaced because user didn't make a selection
     const deleteParams = () => {
         if (movieApp.cast.value === '') {
             delete SearchParams.with_cast
@@ -139,11 +146,12 @@ movieApp.getMovies = function(userGenreSelection, userYearSelection, userInputId
     })
 }
 
-// 6.
+// Displaying movies on page after API call
 movieApp.displayMovie = function(movies) {
     
     const movieRecos = document.querySelector('h2');
 
+    // Error Handling Message
     if (movies.length === 0) {
         const noResultElement = document.createElement('p')
         const resultsSection = document.querySelector('.errors')
@@ -152,7 +160,6 @@ movieApp.displayMovie = function(movies) {
         noResultElement.innerText = `Oops! We can't find any movies with those criteria!`
         resultsSection.append(noResultElement)
     } else {
-        // const movieRecos = document.querySelector('h2');
         movieRecos.innerHTML = `Here are our recommendations!`
         
         movies.forEach(function(movieItem) {
@@ -188,12 +195,13 @@ movieApp.displayMovie = function(movies) {
             ulElement.appendChild(liElements);
 
         });
+
         const startOfResults = document.querySelector('h2')
         startOfResults.scrollIntoView({behavior: 'smooth'})
     }
 };
 
-// variables to store the user selections
+// Variables to store the user selections
 movieApp.year = document.querySelector('#year');
 movieApp.genre = document.querySelector('#genre');
 movieApp.cast = document.querySelector('#userQuerySearch');
@@ -201,7 +209,7 @@ movieApp.userSelections = document.querySelector('.userSelections');
 
 movieApp.formEl = document.querySelector('.userSubmit');
 movieApp.formEl.addEventListener('submit', function(event) {
-    
+
     document.querySelector('.printMovies').innerHTML = ''
     document.querySelector('.errors').innerHTML = ''
 
@@ -209,9 +217,10 @@ movieApp.formEl.addEventListener('submit', function(event) {
         movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value))
     } else {
     movieApp.getCastId(movieApp.cast.value)
-    }
+    };
 
     event.preventDefault();
+    movieApp.formEl.reset();
 })
 
 // Error printing function
