@@ -198,6 +198,8 @@ movieApp.displayMovie = function(movies) {
 
         const startOfResults = document.querySelector('h2')
         startOfResults.scrollIntoView({behavior: 'smooth'})
+
+        movieApp.formEl.reset();
     }
 };
 
@@ -205,7 +207,7 @@ movieApp.displayMovie = function(movies) {
 movieApp.year = document.querySelector('#year');
 movieApp.genre = document.querySelector('#genre');
 movieApp.cast = document.querySelector('#userQuerySearch');
-movieApp.userSelections = document.querySelector('.userSelections');
+// movieApp.userSelections = document.querySelector('.userSelections');
 
 movieApp.formEl = document.querySelector('.userSubmit');
 movieApp.formEl.addEventListener('submit', function(event) {
@@ -220,7 +222,6 @@ movieApp.formEl.addEventListener('submit', function(event) {
     };
 
     event.preventDefault();
-    movieApp.formEl.reset();
 })
 
 // Error printing function
