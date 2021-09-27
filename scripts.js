@@ -49,7 +49,6 @@ movieApp.populateOptions = () => {
                 // the array of genres is one level inside the json object, so need to say 'jsonResponse.genres'
         movieApp.printDropdowns(jsonResponse.genres)
         }).catch((error) => {
-            console.log(error)
             movieApp.resultsError(error);
         });
 };
@@ -85,7 +84,6 @@ movieApp.getCastId = function(userInput) {
         .then(function(jsonData) {
             movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value),`${jsonData.results[0].id}`)
         }).catch((error) => {
-            console.log(error)
             movieApp.resultsError(error)
         })
 };
@@ -135,7 +133,6 @@ movieApp.getMovies = function(userGenreSelection, userYearSelection, userInputId
     })
     .then(function (jsonData) {
         movieApp.displayMovie(jsonData.results);
-        console.log(jsonData.results)
     }).catch((error) => {
 
         movieApp.resultsError(error);
@@ -147,7 +144,6 @@ movieApp.displayMovie = function(movies) {
     
     const movieRecos = document.querySelector('h2');
 
-    console.log(movies)
     if (movies.length === 0) {
         const noResultElement = document.createElement('p')
         const resultsSection = document.querySelector('.errors')
@@ -209,7 +205,11 @@ movieApp.formEl.addEventListener('submit', function(event) {
     document.querySelector('.printMovies').innerHTML = ''
     document.querySelector('.errors').innerHTML = ''
 
+    if (movieApp.cast.value === '') {
+        movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value))
+    } else {
     movieApp.getCastId(movieApp.cast.value)
+    }
 
     event.preventDefault();
 })
