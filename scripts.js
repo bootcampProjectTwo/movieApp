@@ -90,39 +90,40 @@ movieApp.getCastId = function(userInput) {
         })
 };
 
-// 4.
+// Function to make API call for movie list
 movieApp.getMovies = function(userGenreSelection, userYearSelection, userInputId) {
 
-let url = new URL(movieApp.discoverUrl);
-const userEndYear = userYearSelection + 9
+    const url = new URL(movieApp.discoverUrl);
+    const userEndYear = userYearSelection + 9
 
-const SearchParams = {
-    api_key: movieApp.apiKey,
-    with_original_language: "en",
-    sort_by: 'vote_average.desc',
-    "vote_count.gte": 1000,
-    with_genres: userGenreSelection,
-    "primary_release_date.gte": `${userYearSelection}-01-01`,
-    "primary_release_date.lte": `${userEndYear}-12-31`,
-    with_cast: `${userInputId}`
-    // release date keys need to be in quotes because of the dot notation
-}
-const deleteParams = () => {
-    if (movieApp.cast.value === '') {
-        delete SearchParams.with_cast
+    const SearchParams = {
+        api_key: movieApp.apiKey,
+        with_original_language: "en",
+        sort_by: 'vote_average.desc',
+        "vote_count.gte": 1000,
+        with_genres: userGenreSelection,
+        "primary_release_date.gte": `${userYearSelection}-01-01`,
+        "primary_release_date.lte": `${userEndYear}-12-31`,
+        with_cast: `${userInputId}`
+        // release date keys need to be in quotes because of the dot notation
     }
-    if (movieApp.year.value === '') {
-        delete SearchParams["primary_release_date.gte"]
-        delete SearchParams["primary_release_date.lte"]
-    }
-    if (movieApp.genre.value === '') {
-        delete SearchParams.with_genres
-    }
-}
 
-deleteParams()
+    const deleteParams = () => {
+        if (movieApp.cast.value === '') {
+            delete SearchParams.with_cast
+        }
+        if (movieApp.year.value === '') {
+            delete SearchParams["primary_release_date.gte"]
+            delete SearchParams["primary_release_date.lte"]
+        }
+        if (movieApp.genre.value === '') {
+            delete SearchParams.with_genres
+        }
+    }
 
-url.search = new URLSearchParams(SearchParams)
+    deleteParams();
+
+    url.search = new URLSearchParams(SearchParams)
 
     fetch(url)
     .then(function(apiResponse){
@@ -138,38 +139,27 @@ url.search = new URLSearchParams(SearchParams)
 
         movieApp.resultsError(error);
     })
-        // console.log(url.search)
-        // fetch & error checking
-    // fetch(url)
-    // .then(function(apiResponse){
-    //     if (apiResponse.status >= 200 && apiResponse.status <= 299) {
-    //         return apiResponse.json();
-    //     } else {
-    //         throw Error(apiResponse.statusText);
-    //     }
-    // })
-    // .then(function (jsonData) {
-    //     // movieApp.displayMovie(jsonData.results);
-    // }).catch((error) => {
-    //     console.log(error)
-    //     movieApp.resultsError(error);
-//     })
 }
-
-
 
 // 6.
 movieApp.displayMovie = function(movies) {
+    
+    console.log(movies)
     if (movies.length === 0) {
-        
-        const noResultElement = document.createElement('p')
-        const resultsSection = document.querySelector('.errors')
+        // const noResultElement = document.createElement('p')
+        // const resultsSection = document.querySelector('.errors')
 
-        noResultElement.innerText = `Oops! It doesn't look like`
-        resultsSection.append(noResultElement)
-        
+        // noResultElement.innerText = `Oops! It doesn't look like`
+        // resultsSection.append(noResultElement)
+
+        // const resultsSection = document.querySelector('.errors')
+        // const errorMessage = document.createElement('p');
+        // errorMessage.innerText = `Ooops! It looks like we can't reach the MovieDB API right now! Try again in a few minutes!`
+        // resultsSection.append(errorMessage)
+        movieApp.resultsError(); 
     }
-console.log(movies.length)
+
+    console.log(movies.length)
     movies.forEach(function(movieItem) {
         // console.log(movieItem);
 
@@ -206,7 +196,6 @@ console.log(movies.length)
         const ulElement = document.querySelector('.printMovies');
         ulElement.appendChild(liElements);
 
-        formEl.reset();
     });
 };
 
@@ -214,24 +203,35 @@ console.log(movies.length)
 movieApp.year = document.querySelector('#year');
 movieApp.genre = document.querySelector('#genre');
 movieApp.cast = document.querySelector('#userQuerySearch');
+movieApp.userSelections = document.querySelector('.userSelections');
 
 movieApp.formEl = document.querySelector('.userSubmit');
 movieApp.formEl.addEventListener('submit', function(event) {
     document.querySelector('.printMovies').innerHTML = ''
     document.querySelector('.errors').innerHTML = ''
+    
     // if user doesn't provide an actor name, run without getCastId
-        if (movieApp.cast.value === "") {
+    if (movieApp.cast.value === "") {
         console.log('uh oh')
-            movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value));
+        movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value));
     } else {
         console.log('all kewl')
         // get inputs from form selections and send them to the getMovies function
         movieApp.getMovies(movieApp.genre.value, Number(movieApp.year.value), movieApp.getCastId(movieApp.cast.value));
     };
+    if (movieApp.year.value === "" || movieApp.genre.value === "") {
+        console.log('Whaaaaaaaa');
+        movieApp.getMovies(movieApp.getCastId(movieApp.cast.value))
+    } 
+    else {
+        movieApp.resultsError();
+    }
     event.preventDefault();
     console.log(movieApp.year.value)
     console.log(movieApp.genre.value)
     console.log(movieApp.cast.value);
+    
+    movieApp.formEl.reset();
 })
 
 // Error printing function

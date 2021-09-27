@@ -341,6 +341,7 @@ h2 {
 .printMovies h3 {
   height: 4rem;
   margin: 2rem 0;
+  color: aliceblue;
 }
 
 .movieRatingPositioning {
@@ -407,6 +408,11 @@ footer {
   font-size: 1rem;
 }
 
+@media (max-width: 768px) {
+  .printMovies li {
+    width: 45%;
+  }
+}
 @media (max-width: 414px) {
   h1 {
     font-size: 3rem;
