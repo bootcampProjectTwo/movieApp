@@ -166,6 +166,9 @@ movieApp.displayMovie = function(movies) {
 
             const liElements = document.createElement('li');
 
+            const titleContainer = document.createElement('div')
+            titleContainer.classList.add('titleContainer')
+
             const movieTitle = document.createElement('h3');
             movieTitle.innerText = movieItem.original_title;
 
@@ -185,11 +188,16 @@ movieApp.displayMovie = function(movies) {
             const movieOverviewText = document.createElement('p');
             movieOverviewText.innerText = movieItem.overview;
 
+            const backgroundStyle = document.createElement('div')
+            backgroundStyle.classList.add('backgroundStyle')
+
             movieRatingDiv.append(moviePoster, movieRating);
 
             movieOverviewDiv.append(movieOverviewText);
 
-            liElements.append(movieTitle, movieRatingDiv, movieOverviewDiv);
+            titleContainer.append(movieTitle)
+
+            liElements.append(titleContainer, movieRatingDiv, movieOverviewDiv, backgroundStyle);
             
             const ulElement = document.querySelector('.printMovies');
             ulElement.appendChild(liElements);

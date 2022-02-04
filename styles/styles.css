@@ -242,6 +242,19 @@ body {
   background-image: linear-gradient(to right top, #022946, #18324c, #283b53, #364559, #434f60, #444c5f, #464a5d, #48475b, #43374e, #40263d, #3c1429, #340213);
 }
 
+header {
+  min-height: 35vh;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+}
+
 .wrapper {
   width: 90%;
   margin: 0 auto;
@@ -270,15 +283,38 @@ h1, h2, h3 {
 
 h1 {
   font-family: "Limelight", cursive;
-  font-size: 5rem;
-  margin: 12rem 0;
+  font-size: 4rem;
+  padding: 5rem 1rem 3rem 1rem;
   color: #fff;
   text-shadow: 0 0 0px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #5271ff, 0 0 82px #5271ff, 0 0 92px #5271ff, 0 0 102px #5271ff, 0 0 151px #5271ff;
 }
 
+main {
+  width: 100%;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-orient: vertical;
+  -webkit-box-direction: normal;
+      -ms-flex-direction: column;
+          flex-direction: column;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  -ms-flex-wrap: nowrap;
+      flex-wrap: nowrap;
+  min-height: calc(65vh - 3.18rem);
+}
+
+section {
+  width: 100%;
+}
+
 form {
   width: 100%;
-  height: 25vh;
   text-align: center;
   display: -webkit-box;
   display: -ms-flexbox;
@@ -330,9 +366,13 @@ button:focus {
 h2 {
   font-family: "Limelight", cursive;
   font-size: 2rem;
-  margin: 3rem 0 0 0;
+  margin: 3rem 0;
   color: #fff;
   text-shadow: 0 0 0px #fff, 0 0 10px #fff, 0 0 21px #fff, 0 0 42px #5271ff, 0 0 82px #5271ff, 0 0 92px #5271ff, 0 0 102px #5271ff, 0 0 151px #5271ff;
+}
+
+.resultsSection {
+  padding-bottom: 2rem;
 }
 
 .printMovies {
@@ -350,10 +390,24 @@ h2 {
   padding-left: 0;
 }
 
+.titleContainer {
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
+  padding: 1.75rem 0.25rem;
+  height: 6rem;
+}
+
 .printMovies h3 {
-  height: 4rem;
-  margin: 4rem 0 1.5rem 0;
+  font-size: 1.25rem;
   color: aliceblue;
+  vertical-align: middle;
 }
 
 .movieRatingPositioning {
@@ -375,7 +429,7 @@ h2 {
   width: 3rem;
   height: 3rem;
   border-radius: 50%;
-  border: 2px solid navy;
+  border: 3px solid navy;
   position: absolute;
   top: -1rem;
   right: calc(100% / 2 - 1.5rem);
@@ -383,14 +437,16 @@ h2 {
   font-size: 1.4rem;
   color: navy;
   margin: 0;
+  z-index: 1;
 }
 
 .printMovies li {
   width: 30%;
   position: relative;
   list-style: none;
-  margin: 0 0.5rem;
+  margin: 0.5rem;
   overflow: hidden;
+  border-radius: 0.25rem;
 }
 
 .movieOverview {
@@ -406,6 +462,8 @@ h2 {
   transition: -webkit-transform 0.5s ease;
   transition: transform 0.5s ease;
   transition: transform 0.5s ease, -webkit-transform 0.5s ease;
+  max-height: 50%;
+  overflow-y: scroll;
 }
 
 .printMovies li:hover .movieOverview {
@@ -413,22 +471,45 @@ h2 {
           transform: translateY(0);
 }
 
+.backgroundStyle {
+  content: " ";
+  position: absolute;
+  top: 0;
+  height: 100%;
+  width: 100%;
+  background-color: #364559;
+  background-color: #94a9c3;
+  opacity: 0.25;
+  border-radius: 0.25rem;
+  z-index: -1;
+}
+
 footer {
-  text-align: center;
+  min-height: 3rem;
+  display: -webkit-box;
+  display: -ms-flexbox;
+  display: flex;
+  -webkit-box-pack: center;
+      -ms-flex-pack: center;
+          justify-content: center;
+  -webkit-box-align: center;
+      -ms-flex-align: center;
+          align-items: center;
   background-color: #545C69;
-  padding: 1rem 0;
+  padding: 1rem;
   font-size: 1rem;
 }
 
 @media (max-width: 850px) {
   .printMovies li {
     width: 45%;
-    margin: 0 0.25rem;
+    margin: 0.5rem;
   }
 
-  form {
-    height: 45vh;
+  .printMovies h3 {
+    font-size: 1.25rem;
   }
+
   form .userSelections {
     display: -webkit-box;
     display: -ms-flexbox;
@@ -445,13 +526,17 @@ footer {
 }
 @media (max-width: 468px) {
   h1 {
-    font-size: 3rem;
-    margin: 6rem 0 4rem 0;
+    font-size: 2.4rem;
   }
 
   form .userSelections input, form .userSelections select {
+    min-width: auto;
     width: 100%;
     margin: 1rem 0;
+  }
+
+  .printMovies h3 {
+    font-size: 1.15rem;
   }
 
   button {
@@ -461,6 +546,6 @@ footer {
 
   .printMovies li {
     width: 100%;
-    margin: 0;
+    margin: 0.5rem 0;
   }
 }
